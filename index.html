@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Blood Bank</title>
+<style>
+:root{--r:#C8372D;--bg:#fff;--b2:#fbf3f1;--tx:#2a1715;--m:#6f5a56;--bd:#eadcd8;--s:#f3dedb}
+@media(prefers-color-scheme:dark){:root{--bg:#1a1211;--b2:#241816;--tx:#f5e9e6;--m:#c4aca7;--bd:#43302d;--s:#4a2724}}
+*{box-sizing:border-box}body{margin:0;background:var(--b2);color:var(--tx);font:16px/1.6 system-ui,"Segoe UI","Nirmala UI","Noto Sans Bengali",sans-serif}
+.w{max-width:760px;margin:auto;padding:16px}h1,h2,h3{margin:0 0 8px}h1{color:var(--r)}
+.c{background:var(--bg);border:1px solid var(--bd);border-radius:14px;padding:18px;margin:12px 0}
+input,select{width:100%;padding:10px;margin:5px 0;border:1px solid var(--bd);border-radius:10px;background:var(--bg);color:var(--tx);font:inherit}
+button{background:var(--r);color:#fff;border:0;border-radius:999px;padding:10px 20px;font:600 14px inherit;cursor:pointer}
+button.o{background:none;border:1.5px solid var(--r);color:var(--r)}button.t{background:var(--s);color:var(--r)}button.t.on{background:var(--r);color:#fff}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.m{color:var(--m);font-size:14px;margin:3px 0}.e{color:var(--r);font-weight:600}.g{color:#1c7a3d;font-weight:600}
+.top{display:flex;justify-content:space-between;align-items:center;gap:8px}.v{display:none}.v.on{display:block}
+.bg{display:inline-block;background:var(--s);color:var(--r);font-weight:800;border-radius:8px;padding:2px 10px;margin-right:6px}
+</style></head><body><div class="w">
+<div class="top"><h1>🩸 Blood Bank</h1><div><button class="o" id="lg">বাংলা</button> <button class="o" id="lo" style="display:none" data-i="logout">Logout</button></div></div>
+
+<div id="auth" class="c"><h2 id="at"></h2>
+<input id="nm" data-p="name" style="display:none"><input id="em" type="email" data-p="email"><input id="pw" type="password" data-p="pw">
+<button id="ab"></button> <button class="o" id="sw"></button><p id="am" class="e"></p></div>
+
+<div id="app" style="display:none">
+<div class="tabs" id="tabs"><button class="t on" data-t="rq" data-i="tabR">Request blood</button><button class="t" data-t="nt"><span data-i="tabN">Notifications</span> <span id="nc"></span></button><button class="t" data-t="mr" data-i="tabM">My requests</button><button class="t" data-t="dp" data-i="tabD">Donor profile</button></div>
+
+<div class="v on" id="v-rq"><div class="c"><h3 data-i="rTitle">Request blood</h3><form id="rf">
+<input name="patient" required data-p="patient"><select name="blood_group" class="bgs" required></select>
+<input name="bags" type="number" min="1" value="1" data-p="bags"><input name="hospital" required data-p="hospital"><select name="district" class="ds" required></select>
+<input name="phone" type="tel" required data-p="cphone"><select name="urgency" id="urg"></select>
+<button data-i="send">Send request</button><p id="rm" class="g"></p></form><p class="m" data-i="rNote"></p></div></div>
+
+<div class="v" id="v-nt"><div id="nl"></div></div>
+<div class="v" id="v-mr"><div id="ml"></div></div>
+
+<div class="v" id="v-dp"><div class="c"><h3 data-i="dTitle">Become a donor</h3><form id="df">
+<input name="name" required data-p="dName"><select name="blood_group" class="bgs" required></select><select name="district" class="ds" required></select>
+<input name="area" data-p="area"><input name="phone" type="tel" required data-p="dPhone">
+<label class="m"><span data-i="last"></span><input name="last_donation" type="date"></label>
+<label class="m"><input type="checkbox" name="available" checked style="width:auto"> <span data-i="avail"></span></label>
+<button data-i="save">Save</button> <button type="button" class="o" id="dd" style="display:none" data-i="del">Delete</button><p id="dm" class="g"></p></form></div></div>
+</div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const SUPABASE_URL="https://aqyilswmxycctmnmjnqg.supabase.co", SUPABASE_KEY="sb_publishable_JQpXdL38R4cwrN9w-TEAlQ_CMUAteiA";
+let sb=null,initErr="";
+try{
+ if(/PASTE_YOUR/.test(SUPABASE_URL+SUPABASE_KEY))throw new Error("e_paste");
+ sb=supabase.createClient(SUPABASE_URL.trim(),SUPABASE_KEY.trim());
+}catch(e){initErr=e.message=="e_paste"?"e_paste":(e.message.indexOf("supabase is not defined")>-1?"e_lib":e.message)}
+const $=i=>document.getElementById(i), el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+const BG=["A+","A-","B+","B-","AB+","AB-","O+","O-"];
+const DS="Bagerhat,Bandarban,Barguna,Barishal,Bhola,Bogura,Brahmanbaria,Chandpur,Chapainawabganj,Chattogram,Chuadanga,Cumilla,Cox's Bazar,Dhaka,Dinajpur,Faridpur,Feni,Gaibandha,Gazipur,Gopalganj,Habiganj,Jamalpur,Jashore,Jhalokati,Jhenaidah,Joypurhat,Khagrachhari,Khulna,Kishoreganj,Kurigram,Kushtia,Lakshmipur,Lalmonirhat,Madaripur,Magura,Manikganj,Meherpur,Moulvibazar,Munshiganj,Mymensingh,Naogaon,Narail,Narayanganj,Narsingdi,Natore,Netrokona,Nilphamari,Noakhali,Pabna,Panchagarh,Patuakhali,Pirojpur,Rajbari,Rajshahi,Rangamati,Rangpur,Satkhira,Shariatpur,Sherpur,Sirajganj,Sunamganj,Sylhet,Tangail,Thakurgaon".split(",");
+const DSB="বাগেরহাট,বান্দরবান,বরগুনা,বরিশাল,ভোলা,বগুড়া,ব্রাহ্মণবাড়িয়া,চাঁদপুর,চাঁপাইনবাবগঞ্জ,চট্টগ্রাম,চুয়াডাঙ্গা,কুমিল্লা,কক্সবাজার,ঢাকা,দিনাজপুর,ফরিদপুর,ফেনী,গাইবান্ধা,গাজীপুর,গোপালগঞ্জ,হবিগঞ্জ,জামালপুর,যশোর,ঝালকাঠি,ঝিনাইদহ,জয়পুরহাট,খাগড়াছড়ি,খুলনা,কিশোরগঞ্জ,কুড়িগ্রাম,কুষ্টিয়া,লক্ষ্মীপুর,লালমনিরহাট,মাদারীপুর,মাগুরা,মানিকগঞ্জ,মেহেরপুর,মৌলভীবাজার,মুন্সিগঞ্জ,ময়মনসিংহ,নওগাঁ,নড়াইল,নারায়ণগঞ্জ,নরসিংদী,নাটোর,নেত্রকোণা,নীলফামারী,নোয়াখালী,পাবনা,পঞ্চগড়,পটুয়াখালী,পিরোজপুর,রাজবাড়ী,রাজশাহী,রাঙামাটি,রংপুর,সাতক্ষীরা,শরীয়তপুর,শেরপুর,সিরাজগঞ্জ,সুনামগঞ্জ,সিলেট,টাঙ্গাইল,ঠাকুরগাঁও".split(",");
+const L={en:{logout:"Logout",login:"Login",reg:"Registration",register:"Register",name:"Your name",email:"Email",pw:"Password (min 6 characters)",newq:"New here? Register",haveq:"Have an account? Login",
+tabR:"Request blood",tabN:"Notifications",tabM:"My requests",tabD:"Donor profile",rTitle:"Request blood",patient:"Patient name",group:"Blood group",bags:"Bags needed",hospital:"Hospital",district:"District",cphone:"Contact phone",urgent:"Urgent",normal:"Normal",send:"Send request",
+rNote:"Donors with the same blood group in the same district are notified instantly.",rSent:"Request sent. Matching donors have been notified.",noN:"No notifications yet.",call:"Call: ",accept:"I'm coming (Accept)",accepted:"Accepted. The requester will get your number.",already:"Already accepted",needP:"Please save your donor profile first.",
+noM:"You have not made any request yet.",status:"Status: ",open:"Open",done:"Fulfilled",coming:" donor(s) coming:",none:"No one has accepted yet.",markDone:"Mark as fulfilled",
+dTitle:"Become a donor",dName:"Full name",area:"Upazila / area",dPhone:"Phone number",last:"Last donation date (optional)",avail:"I am available to donate",save:"Save",del:"Delete",saved:"Saved. Thank you!",cdel:"Delete your donor profile?",
+chk:"Check your email to confirm your account, then log in.",e_paste:"Setup error: Supabase URL/key is not set in the file.",e_lib:"Setup error: could not load Supabase library. Check your internet.",
+"Invalid login credentials":"Wrong email or password.","User already registered":"This email is already registered. Please log in.","email rate limit exceeded":"Too many emails sent. Please try again later.","Email not confirmed":"Please confirm your email first.",
+bneeded:(g,u,h,d)=>g+" blood needed ("+u+") at "+h+", "+d+"."},
+bn:{logout:"লগআউট",login:"লগইন",reg:"রেজিস্ট্রেশন",register:"রেজিস্ট্রেশন করুন",name:"আপনার নাম",email:"ইমেইল",pw:"পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)",newq:"নতুন? রেজিস্ট্রেশন করুন",haveq:"অ্যাকাউন্ট আছে? লগইন করুন",
+tabR:"রক্ত চাই",tabN:"নোটিফিকেশন",tabM:"আমার আবেদন",tabD:"ডোনার প্রোফাইল",rTitle:"রক্তের আবেদন করুন",patient:"রোগীর নাম",group:"রক্তের গ্রুপ",bags:"কত ব্যাগ লাগবে",hospital:"হাসপাতাল",district:"জেলা",cphone:"যোগাযোগের ফোন নম্বর",urgent:"জরুরি",normal:"সাধারণ",send:"আবেদন পাঠান",
+rNote:"একই রক্তের গ্রুপ ও একই জেলার ডোনারদের সাথে সাথে জানানো হবে।",rSent:"আবেদন পাঠানো হয়েছে। মিল থাকা ডোনারদের জানানো হয়েছে।",noN:"এখনো কোনো নোটিফিকেশন নেই।",call:"ফোন: ",accept:"আমি আসছি (গ্রহণ করুন)",accepted:"গ্রহণ করা হয়েছে। আবেদনকারী আপনার নম্বর পাবেন।",already:"আগেই গ্রহণ করেছেন",needP:"আগে ডোনার প্রোফাইল সেভ করুন।",
+noM:"আপনি এখনো কোনো আবেদন করেননি।",status:"অবস্থা: ",open:"চলমান",done:"সম্পন্ন",coming:" জন ডোনার আসছেন:",none:"এখনো কেউ গ্রহণ করেননি।",markDone:"সম্পন্ন হিসেবে চিহ্নিত করুন",
+dTitle:"ডোনার হিসেবে যুক্ত হন",dName:"পুরো নাম",area:"উপজেলা / এলাকা",dPhone:"ফোন নম্বর",last:"শেষ রক্তদানের তারিখ (ঐচ্ছিক)",avail:"আমি রক্ত দিতে পারব",save:"সেভ করুন",del:"মুছে ফেলুন",saved:"সেভ হয়েছে। ধন্যবাদ!",cdel:"আপনার ডোনার প্রোফাইল মুছে ফেলবেন?",
+chk:"অ্যাকাউন্ট নিশ্চিত করতে ইমেইল দেখুন, তারপর লগইন করুন।",e_paste:"সেটআপ ত্রুটি: ফাইলে Supabase URL/key বসানো হয়নি।",e_lib:"সেটআপ ত্রুটি: Supabase লাইব্রেরি লোড হয়নি। ইন্টারনেট দেখুন।",
+"Invalid login credentials":"ইমেইল বা পাসওয়ার্ড ভুল।","User already registered":"এই ইমেইল আগেই নিবন্ধিত। লগইন করুন।","email rate limit exceeded":"অনেক ইমেইল পাঠানো হয়ে গেছে। পরে আবার চেষ্টা করুন।","Email not confirmed":"আগে ইমেইল নিশ্চিত করুন।",
+bneeded:(g,u,h,d)=>h+", "+d+"-এ "+g+" রক্ত লাগবে ("+u+")।"}};
+let lang="en";try{lang=localStorage.getItem("lang")||"en"}catch(e){}
+const t=k=>(L[lang][k]!==undefined?L[lang][k]:(L.en[k]!==undefined?L.en[k]:k));
+const dn=d=>{const i=DS.indexOf(d);return lang=="bn"&&i>-1?DSB[i]:d};
+const un=u=>t(u=="Urgent"?"urgent":"normal");
+let reg=false,me=null,donor=null,ch=[],NL=[],ML=[],msgs={};
+function setMsg(id,k,raw){msgs[id]={k:k,raw:raw};$(id).textContent=k?t(k):(L.en[raw]!==undefined?t(raw):raw)}
+function sels(){document.querySelectorAll(".bgs").forEach(s=>{const v=s.value;s.textContent="";s.append(new Option(t("group"),""));BG.forEach(g=>s.append(new Option(g,g)));s.value=v});
+ document.querySelectorAll(".ds").forEach(s=>{const v=s.value;s.textContent="";s.append(new Option(t("district"),""));DS.forEach((g,i)=>s.append(new Option(lang=="bn"?DSB[i]:g,g)));s.value=v});
+ const u=$("urg"),uv=u.value;u.textContent="";u.append(new Option(t("urgent"),"Urgent"),new Option(t("normal"),"Normal"));u.value=uv||"Urgent"}
+function applyLang(){document.documentElement.lang=lang;
+ document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));
+ document.querySelectorAll("[data-p]").forEach(e=>e.placeholder=t(e.dataset.p));
+ $("lg").textContent=lang=="en"?"বাংলা":"English";
+ $("at").textContent=t(reg?"reg":"login");$("ab").textContent=t(reg?"register":"login");$("sw").textContent=t(reg?"haveq":"newq");
+ sels();for(const id in msgs)setMsg(id,msgs[id].k,msgs[id].raw);
+ if(me){renderN();renderM()}}
+$("lg").onclick=()=>{lang=lang=="en"?"bn":"en";try{localStorage.setItem("lang",lang)}catch(e){}applyLang()};
+$("sw").onclick=()=>{reg=!reg;$("nm").style.display=reg?"block":"none";setMsg("am","","");applyLang()};
+$("ab").onclick=async()=>{setMsg("am","","");if(!sb){setMsg("am",initErr,initErr);return}const e=$("em").value,p=$("pw").value;
+ const r=reg?await sb.auth.signUp({email:e,password:p,options:{data:{name:$("nm").value}}}):await sb.auth.signInWithPassword({email:e,password:p});
+ if(r.error)setMsg("am","",r.error.message);else if(reg&&!r.data.session)setMsg("am","chk")};
+$("lo").onclick=()=>sb.auth.signOut();
+if(sb)sb.auth.onAuthStateChange((_,s)=>{me=s?s.user:null;$("auth").style.display=me?"none":"block";$("app").style.display=me?"block":"none";$("lo").style.display=me?"inline-block":"none";ch.forEach(c=>sb.removeChannel(c));ch=[];if(me)start()});
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x==b));document.querySelectorAll(".v").forEach(v=>v.classList.toggle("on",v.id=="v-"+b.dataset.t))});
+async function start(){await loadDonor();loadN();loadM();
+ ch.push(sb.channel("n").on("postgres_changes",{event:"INSERT",schema:"public",table:"notifications",filter:"user_id=eq."+me.id},loadN).subscribe());
+ ch.push(sb.channel("r").on("postgres_changes",{event:"INSERT",schema:"public",table:"responses"},loadM).subscribe())}
+async function loadDonor(){const{data}=await sb.from("donors").select("*").eq("user_id",me.id).maybeSingle();donor=data;const f=$("df");if(data){for(const k of["name","blood_group","district","area","phone","last_donation"])f[k].value=data[k]||"";f.available.checked=data.available}$("dd").style.display=data?"inline-block":"none"}
+$("df").onsubmit=async e=>{e.preventDefault();const f=e.target;const{error}=await sb.from("donors").upsert({user_id:me.id,name:f.name.value,blood_group:f.blood_group.value,district:f.district.value,area:f.area.value,phone:f.phone.value,last_donation:f.last_donation.value||null,available:f.available.checked});error?setMsg("dm","",error.message):setMsg("dm","saved");await loadDonor()};
+$("dd").onclick=async()=>{if(confirm(t("cdel"))){await sb.from("donors").delete().eq("user_id",me.id);$("df").reset();setMsg("dm","","");loadDonor()}};
+$("rf").onsubmit=async e=>{e.preventDefault();const f=e.target,o={};new FormData(f).forEach((v,k)=>o[k]=v);o.bags=+o.bags||1;const{error}=await sb.from("requests").insert(o);error?setMsg("rm","",error.message):setMsg("rm","rSent");if(!error){f.reset();$("urg").value="Urgent";loadM()}};
+async function loadN(){const{data}=await sb.from("notifications").select("*, requests(status,blood_group,urgency,hospital,district,phone)").order("created_at",{ascending:false}).limit(50);NL=data||[];renderN()}
+function renderN(){const b=$("nl");b.textContent="";const un_=NL.filter(n=>!n.read).length;$("nc").textContent=un_?"("+un_+")":"";
+ if(!NL.length)b.append(el("p","m",t("noN")));
+ NL.forEach(n=>{const r=n.requests,c=el("div","c");
+  c.append(el("p",0,r?L[lang].bneeded(r.blood_group,un(r.urgency),r.hospital,dn(r.district)):n.message));
+  if(r)c.append(el("p","m",t("call")+r.phone));
+  c.append(el("p","m",new Date(n.created_at).toLocaleString(lang=="bn"?"bn-BD":"en-GB")));
+  if(r&&r.status=="open"){const a=el("button",0,t("accept"));a.onclick=async()=>{if(!donor){alert(t("needP"));return}const{error}=await sb.from("responses").insert({request_id:n.request_id,donor_name:donor.name,donor_phone:donor.phone});await sb.from("notifications").update({read:true}).eq("id",n.id);a.textContent=error?t("already"):t("accepted");a.disabled=true};c.append(a)}
+  b.append(c)})}
+async function loadM(){const{data}=await sb.from("requests").select("*, responses(donor_name,donor_phone)").eq("user_id",me.id).order("created_at",{ascending:false});ML=data||[];renderM()}
+function renderM(){const b=$("ml");b.textContent="";if(!ML.length)b.append(el("p","m",t("noM")));
+ ML.forEach(r=>{const c=el("div","c");c.append(el("span","bg",r.blood_group));c.append(el("b",0,r.patient+" - "+r.hospital+", "+dn(r.district)));c.append(el("p","m",t("status")+t(r.status=="open"?"open":"done")));
+  const rs=r.responses||[];c.append(el("p",rs.length?"g":"m",rs.length?rs.length+t("coming"):t("none")));
+  rs.forEach(x=>{const a=el("a",0,x.donor_name+" - "+x.donor_phone);a.href="tel:"+x.donor_phone;a.style.display="block";c.append(a)});
+  if(r.status=="open"){const d=el("button","o",t("markDone"));d.onclick=async()=>{await sb.from("requests").update({status:"done"}).eq("id",r.id);loadM()};c.append(d)}b.append(c)})}
+applyLang();if(initErr)setMsg("am",initErr,initErr);
+</script></body></html>
