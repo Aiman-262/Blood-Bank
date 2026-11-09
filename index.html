@@ -15,9 +15,45 @@ button.o{background:none;border:1.5px solid var(--r);color:var(--r)}button.t{bac
 .top{display:flex;justify-content:space-between;align-items:center;gap:8px}.v{display:none}.v.on{display:block}
 .bg{display:inline-block;background:var(--s);color:var(--r);font-weight:800;border-radius:8px;padding:2px 10px;margin-right:6px}
 #fgw a{color:var(--r);font-weight:600}
+
+/* ===== App-style theme (appearance only) ===== */
+:root{--r:#C62828;--rd:#8B0000;--b2:#f7f7f7;--bd:#eedcdc;--s:#fdecec}
+@media(prefers-color-scheme:dark){:root{--b2:#140e0d;--s:#3a1d1b}}
+.w{max-width:620px;padding:0 0 96px}
+.top{background:linear-gradient(135deg,var(--r),var(--rd));padding:calc(18px + env(safe-area-inset-top,0px)) 16px 22px;border-radius:0 0 28px 28px;box-shadow:0 6px 18px rgba(139,0,0,.25)}
+.top h1{color:#fff;font-size:22px;margin:0}
+.top button.o{border-color:#fff;color:#fff;padding:7px 14px}
+#sc{margin:12px 16px 0;padding:8px 14px;background:#fff3e0;color:#e65100;border-radius:12px;font-size:13px;font-weight:600}
+#auth{margin:16px}
+#app{padding:0 16px}
+.c{border-radius:20px;box-shadow:0 2px 10px rgba(0,0,0,.06);border-color:var(--bd)}
+#v-nt .c,#v-mr .c{background:#fdeeee;border:0}
+@media(prefers-color-scheme:dark){#v-nt .c,#v-mr .c{background:#2a1816}}
+.bg{background:var(--r);color:#fff;border-radius:999px;padding:3px 12px}
+input,select{border-radius:14px;padding:12px}
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:30;margin:0;gap:0;flex-wrap:nowrap;justify-content:space-around;background:var(--bg);border-top:1px solid var(--bd);box-shadow:0 -4px 14px rgba(0,0,0,.08);padding:6px 4px calc(6px + env(safe-area-inset-bottom,0px))}
+#tabs button.t{flex:1;background:none;color:var(--m);border-radius:12px;padding:4px 2px;font:600 11px/1.2 inherit;display:flex;flex-direction:column;align-items:center;gap:2px}
+#tabs button.t.on{background:none;color:var(--r)}
+#tabs button.t::before{font-size:22px;line-height:1.1;filter:grayscale(1);opacity:.7}
+#tabs button.t.on::before{filter:none;opacity:1}
+#tabs button[data-t=rq]::before{content:"\1FA78"}
+#tabs button[data-t=nt]::before{content:"\1F514"}
+#tabs button[data-t=mr]::before{content:"\1F4CB"}
+#tabs button[data-t=dp]::before{content:"\1F464"}
+#tabs button[data-t=ai]::before{content:"\1F916"}
+.gp{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0}
+.gp button{width:64px;height:64px;border-radius:50%;background:var(--bg);color:var(--tx);border:2px solid var(--bd);padding:0;font:800 16px inherit;box-shadow:0 2px 6px rgba(0,0,0,.08)}
+.gp button.on{background:linear-gradient(135deg,var(--r),var(--rd));color:#fff;border-color:var(--r)}
+.cr{border-radius:16px;padding:12px;margin:10px 0}
+.cr.gv{background:#fdeeee}.cr.rc{background:#edf6ee}
+@media(prefers-color-scheme:dark){.cr.gv{background:#2a1816}.cr.rc{background:#17261a}}
+.cr h4{margin:0 0 8px;font-size:15px}.cr.gv h4{color:var(--r)}.cr.rc h4{color:#1c7a3d}
+.cr span{display:inline-block;min-width:44px;text-align:center;margin:3px 4px 3px 0;padding:6px 10px;border-radius:999px;font-weight:800;font-size:14px;border:2px solid}
+.cr.gv span{border-color:#e7a7a3;color:var(--r)}.cr.rc span{border-color:#a5cfae;color:#1c7a3d}
 </style></head><body><div class="w">
 <div class="top"><h1>🩸 Blood Bank</h1><div><button class="o" id="lg">বাংলা</button> <button class="o" id="lo" style="display:none" data-i="logout">Logout</button></div></div>
 
+<div id="sc"></div>
 <div id="auth" class="c"><h2 id="at"></h2>
 <input id="nm" data-p="name" style="display:none">
 <input id="em" type="email" data-p="email" autocomplete="email">
@@ -30,7 +66,7 @@ button.o{background:none;border:1.5px solid var(--r);color:var(--r)}button.t{bac
 <div id="app" style="display:none">
 <div class="tabs" id="tabs"><button class="t on" data-t="rq" data-i="tabR">Request blood</button><button class="t" data-t="nt"><span data-i="tabN">Notifications</span> <span id="nc"></span></button><button class="t" data-t="mr" data-i="tabM">My requests</button><button class="t" data-t="dp" data-i="tabD">Donor profile</button><button class="t" data-t="ai" data-i="tabA">Ask AI</button></div>
 
-<div class="v on" id="v-rq"><div class="c"><h3 data-i="rTitle">Request blood</h3><form id="rf">
+<div class="v on" id="v-rq"><div class="c" id="cg"></div><div class="c"><h3 data-i="rTitle">Request blood</h3><form id="rf">
 <input name="patient" required data-p="patient"><select name="blood_group" class="bgs" required></select>
 <input name="bags" type="number" min="1" value="1" data-p="bags"><input name="hospital" required data-p="hospital"><select name="district" class="ds" required></select>
 <input name="phone" type="tel" required data-p="cphone"><select name="urgency" id="urg"></select>
@@ -206,4 +242,25 @@ $("as").onclick=async()=>{const q=$("aq").value.trim();if(!q)return;const box=$(
  try{w.textContent="🤖 "+await AiAssistant.ask(q);w.className=""}catch(e){w.textContent=t("aErr");w.className="e"}};
 if("serviceWorker" in navigator)window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
 applyLang();if(initErr)setMsg("am",initErr,initErr);
+
+/* ===== Compatibility guide + scam notice (display only) ===== */
+(function(){try{
+const G=["A+","A-","B+","B-","AB+","AB-","O+","O-"];let sel="A+";
+const can=(d,r)=>{const A=x=>x.indexOf("A")>-1,B=x=>x.indexOf("B")>-1,P=x=>x.indexOf("+")>-1;return(!A(d)||A(r))&&(!B(d)||B(r))&&(!P(d)||P(r))};
+const bn=()=>typeof lang!=="undefined"&&lang==="bn";
+function draw(){
+ const b=bn(),box=document.getElementById("cg"),sc=document.getElementById("sc");
+ if(sc)sc.textContent=b?"\u26A0\uFE0F \u09B0\u0995\u09CD\u09A4\u09C7\u09B0 \u099C\u09A8\u09CD\u09AF \u0995\u09CB\u09A8\u09CB \u099F\u09BE\u0995\u09BE \u09A6\u09BF\u09AC\u09C7\u09A8 \u09A8\u09BE\u0964 \u09AA\u09CD\u09B0\u09A4\u09BE\u09B0\u09A3\u09BE \u09A5\u09C7\u0995\u09C7 \u09B8\u09BE\u09AC\u09A7\u09BE\u09A8 \u09A5\u09BE\u0995\u09C1\u09A8\u0964":"\u26A0\uFE0F Never pay money for blood. Beware of scams.";
+ if(!box)return;box.textContent="";
+ const h=document.createElement("h3");h.textContent=b?"\u09B0\u0995\u09CD\u09A4\u09C7\u09B0 \u09B8\u09BE\u09AE\u099E\u09CD\u099C\u09B8\u09CD\u09AF\u09A4\u09BE":"Blood compatibility";box.append(h);
+ const p=document.createElement("p");p.className="m";p.textContent=b?"\u098F\u0995\u099F\u09BF \u0997\u09CD\u09B0\u09C1\u09AA \u099A\u09BE\u09AA\u09C1\u09A8":"Tap a blood group";box.append(p);
+ const gp=document.createElement("div");gp.className="gp";
+ G.forEach(g=>{const x=document.createElement("button");x.type="button";x.textContent=g;if(g===sel)x.className="on";x.onclick=()=>{sel=g;draw()};gp.append(x)});box.append(gp);
+ const row=(cls,title,list)=>{const d=document.createElement("div");d.className="cr "+cls;const t=document.createElement("h4");t.textContent=title;d.append(t);list.forEach(g=>{const s=document.createElement("span");s.textContent=g;d.append(s)});box.append(d)};
+ row("gv",(b?"\u0995\u09BE\u0995\u09C7 \u09B0\u0995\u09CD\u09A4 \u09A6\u09BF\u09A4\u09C7 \u09AA\u09BE\u09B0\u09AC\u09C7\u09A8":"You can give to")+" ("+sel+")",G.filter(r=>can(sel,r)));
+ row("rc",(b?"\u0995\u09BE\u09B0 \u09B0\u0995\u09CD\u09A4 \u09A8\u09BF\u09A4\u09C7 \u09AA\u09BE\u09B0\u09AC\u09C7\u09A8":"You can receive from")+" ("+sel+")",G.filter(d=>can(d,sel)));
+}
+draw();
+const lb=document.getElementById("lg");if(lb)lb.addEventListener("click",()=>setTimeout(draw,0));
+}catch(e){}})();
 </script></body></html>
