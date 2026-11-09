@@ -51,7 +51,7 @@ input,select{border-radius:14px;padding:12px}
 .cr span{display:inline-block;min-width:44px;text-align:center;margin:3px 4px 3px 0;padding:6px 10px;border-radius:999px;font-weight:800;font-size:14px;border:2px solid}
 .cr.gv span{border-color:#e7a7a3;color:var(--r)}.cr.rc span{border-color:#a5cfae;color:#1c7a3d}
 </style></head><body><div class="w">
-<div class="top"><h1>🩸 Blood Bank</h1><div><button class="o" id="lg">বাংলা</button> <button class="o" id="lo" style="display:none" data-i="logout">Logout</button></div></div>
+<div class="top"><div><h1>🩸 Blood Bank</h1><div id="who" style="font-size:12px;color:#fff;opacity:.9;word-break:break-all"></div></div><div><button class="o" id="lg">বাংলা</button> <button class="o" id="lo" style="display:none" data-i="logout">Logout</button></div></div>
 
 <div id="sc"></div>
 <div id="auth" class="c"><h2 id="at"></h2>
@@ -76,7 +76,7 @@ input,select{border-radius:14px;padding:12px}
 <div class="v" id="v-nt"><div id="nl"></div></div>
 <div class="v" id="v-mr"><div id="ml"></div></div>
 
-<div class="v" id="v-dp"><div class="c"><h3 data-i="dTitle">Become a donor</h3><form id="df">
+<div class="v" id="v-dp"><div class="c"><h3 data-i="dTitle">Become a donor</h3><p class="m" id="who2"></p><form id="df">
 <input name="name" required data-p="dName"><select name="blood_group" class="bgs" required></select><select name="district" class="ds" required></select>
 <input name="area" data-p="area"><input name="phone" type="tel" required data-p="dPhone">
 <label class="m"><span data-i="last"></span><input name="last_donation" type="date"></label>
@@ -96,7 +96,7 @@ const $=i=>document.getElementById(i), el=(t,c,x)=>{const e=document.createEleme
 const BG=["A+","A-","B+","B-","AB+","AB-","O+","O-"];
 const DS="Bagerhat,Bandarban,Barguna,Barishal,Bhola,Bogura,Brahmanbaria,Chandpur,Chapainawabganj,Chattogram,Chuadanga,Cumilla,Cox's Bazar,Dhaka,Dinajpur,Faridpur,Feni,Gaibandha,Gazipur,Gopalganj,Habiganj,Jamalpur,Jashore,Jhalokati,Jhenaidah,Joypurhat,Khagrachhari,Khulna,Kishoreganj,Kurigram,Kushtia,Lakshmipur,Lalmonirhat,Madaripur,Magura,Manikganj,Meherpur,Moulvibazar,Munshiganj,Mymensingh,Naogaon,Narail,Narayanganj,Narsingdi,Natore,Netrokona,Nilphamari,Noakhali,Pabna,Panchagarh,Patuakhali,Pirojpur,Rajbari,Rajshahi,Rangamati,Rangpur,Satkhira,Shariatpur,Sherpur,Sirajganj,Sunamganj,Sylhet,Tangail,Thakurgaon".split(",");
 const DSB="বাগেরহাট,বান্দরবান,বরগুনা,বরিশাল,ভোলা,বগুড়া,ব্রাহ্মণবাড়িয়া,চাঁদপুর,চাঁপাইনবাবগঞ্জ,চট্টগ্রাম,চুয়াডাঙ্গা,কুমিল্লা,কক্সবাজার,ঢাকা,দিনাজপুর,ফরিদপুর,ফেনী,গাইবান্ধা,গাজীপুর,গোপালগঞ্জ,হবিগঞ্জ,জামালপুর,যশোর,ঝালকাঠি,ঝিনাইদহ,জয়পুরহাট,খাগড়াছড়ি,খুলনা,কিশোরগঞ্জ,কুড়িগ্রাম,কুষ্টিয়া,লক্ষ্মীপুর,লালমনিরহাট,মাদারীপুর,মাগুরা,মানিকগঞ্জ,মেহেরপুর,মৌলভীবাজার,মুন্সিগঞ্জ,ময়মনসিংহ,নওগাঁ,নড়াইল,নারায়ণগঞ্জ,নরসিংদী,নাটোর,নেত্রকোণা,নীলফামারী,নোয়াখালী,পাবনা,পঞ্চগড়,পটুয়াখালী,পিরোজপুর,রাজবাড়ী,রাজশাহী,রাঙামাটি,রংপুর,সাতক্ষীরা,শরীয়তপুর,শেরপুর,সিরাজগঞ্জ,সুনামগঞ্জ,সিলেট,টাঙ্গাইল,ঠাকুরগাঁও".split(",");
-const L={en:{tabA:"Ask AI",aTitle:"Blood donation assistant (AI)",aNote:"Ask about blood groups, who can donate, or how to use this site. General information only, not medical advice.",aPh:"Type your question",aSend:"Ask",aWait:"Thinking...",aErr:"AI is not available right now.",tabJ:"Java API",mTitle:"Find matching donors (Java)",mBtn:"Find donors",mNone:"No matching donor found.",jNote:"Answered by the Java API. Keep the Java server running.",jTitle:"Blood compatibility",jBtn:"Check",eTitle:"Can I donate now?",eBtn:"Check eligibility",jCan:"Can donate to: ",jRec:"Can receive from: ",jYes:"Eligible to donate now.",jNo:"Not yet. Next eligible date: ",jErr:"Java API is not running. Start the Java server first.",logout:"Logout",login:"Login",reg:"Registration",register:"Register",name:"Your name",email:"Email",pw:"Password (min 6 characters)",newq:"New here? Register",haveq:"Have an account? Login",
+const L={en:{tabA:"Ask AI",aTitle:"Blood donation assistant (AI)",aNote:"Ask about blood groups, who can donate, or how to use this site. General information only, not medical advice.",aPh:"Type your question",aSend:"Ask",aWait:"Thinking...",aErr:"AI is not available right now.",tabJ:"Java API",mTitle:"Find matching donors (Java)",mBtn:"Find donors",mNone:"No matching donor found.",jNote:"Answered by the Java API. Keep the Java server running.",jTitle:"Blood compatibility",jBtn:"Check",eTitle:"Can I donate now?",eBtn:"Check eligibility",jCan:"Can donate to: ",jRec:"Can receive from: ",jYes:"Eligible to donate now.",jNo:"Not yet. Next eligible date: ",jErr:"Java API is not running. Start the Java server first.",logout:"Logout",loggedAs:"Logged in as: ",login:"Login",reg:"Registration",register:"Register",name:"Your name",email:"Email",pw:"Password (min 6 characters)",newq:"New here? Register",haveq:"Have an account? Login",
 code:"Code from your email",npw:"New password (min 6 characters)",vTitle:"Enter the code",fTitle:"Forgot password",rsTitle:"Set a new password",verify:"Verify",sendCode:"Send code",resetBtn:"Change password",back:"Back to login",forgotq:"Forgot password?",resend:"Resend code",
 codeSent:"A code has been sent to your email. Enter it below.",pwDone:"Password changed successfully.",needEmail:"Please enter your email first.",needCode:"Please enter the code from your email.",short:"Password must be at least 6 characters.",
 badcode:"The code is wrong or has expired. Please try again.",wait:"Please wait a minute before asking for another code.",
@@ -107,7 +107,7 @@ dTitle:"Become a donor",dName:"Full name",area:"Upazila / area",dPhone:"Phone nu
 e_paste:"Setup error: Supabase URL/key is not set in the file.",e_lib:"Setup error: could not load Supabase library. Check your internet.",
 "Invalid login credentials":"Wrong email or password.","User already registered":"This email is already registered. Please log in.","email rate limit exceeded":"Too many emails sent. Please try again later.","Email not confirmed":"Please confirm your email first.",
 bneeded:(g,u,h,d)=>g+" blood needed ("+u+") at "+h+", "+d+"."},
-bn:{tabA:"AI-কে জিজ্ঞেস করুন",aTitle:"রক্তদান সহকারী (AI)",aNote:"রক্তের গ্রুপ, কে রক্ত দিতে পারে বা সাইট ব্যবহার নিয়ে প্রশ্ন করুন। এটা সাধারণ তথ্য, চিকিৎসা পরামর্শ নয়।",aPh:"আপনার প্রশ্ন লিখুন",aSend:"জিজ্ঞেস করুন",aWait:"ভাবছি...",aErr:"AI এখন পাওয়া যাচ্ছে না।",tabJ:"Java API",mTitle:"মিল থাকা ডোনার খুঁজুন (Java)",mBtn:"ডোনার খুঁজুন",mNone:"মিল থাকা ডোনার পাওয়া যায়নি।",jNote:"উত্তর দেয় Java API। Java সার্ভার চালু রাখুন।",jTitle:"রক্তের গ্রুপ মিল",jBtn:"দেখুন",eTitle:"আমি কি এখন রক্ত দিতে পারব?",eBtn:"যোগ্যতা দেখুন",jCan:"রক্ত দিতে পারবে: ",jRec:"রক্ত নিতে পারবে: ",jYes:"এখন রক্ত দিতে পারবেন।",jNo:"এখনো নয়। পরের তারিখ: ",jErr:"Java API চালু নেই। আগে Java সার্ভার চালু করুন।",logout:"লগআউট",login:"লগইন",reg:"রেজিস্ট্রেশন",register:"রেজিস্ট্রেশন করুন",name:"আপনার নাম",email:"ইমেইল",pw:"পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)",newq:"নতুন? রেজিস্ট্রেশন করুন",haveq:"অ্যাকাউন্ট আছে? লগইন করুন",
+bn:{tabA:"AI-কে জিজ্ঞেস করুন",aTitle:"রক্তদান সহকারী (AI)",aNote:"রক্তের গ্রুপ, কে রক্ত দিতে পারে বা সাইট ব্যবহার নিয়ে প্রশ্ন করুন। এটা সাধারণ তথ্য, চিকিৎসা পরামর্শ নয়।",aPh:"আপনার প্রশ্ন লিখুন",aSend:"জিজ্ঞেস করুন",aWait:"ভাবছি...",aErr:"AI এখন পাওয়া যাচ্ছে না।",tabJ:"Java API",mTitle:"মিল থাকা ডোনার খুঁজুন (Java)",mBtn:"ডোনার খুঁজুন",mNone:"মিল থাকা ডোনার পাওয়া যায়নি।",jNote:"উত্তর দেয় Java API। Java সার্ভার চালু রাখুন।",jTitle:"রক্তের গ্রুপ মিল",jBtn:"দেখুন",eTitle:"আমি কি এখন রক্ত দিতে পারব?",eBtn:"যোগ্যতা দেখুন",jCan:"রক্ত দিতে পারবে: ",jRec:"রক্ত নিতে পারবে: ",jYes:"এখন রক্ত দিতে পারবেন।",jNo:"এখনো নয়। পরের তারিখ: ",jErr:"Java API চালু নেই। আগে Java সার্ভার চালু করুন।",logout:"লগআউট",loggedAs:"লগইন করা ইমেইল: ",login:"লগইন",reg:"রেজিস্ট্রেশন",register:"রেজিস্ট্রেশন করুন",name:"আপনার নাম",email:"ইমেইল",pw:"পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)",newq:"নতুন? রেজিস্ট্রেশন করুন",haveq:"অ্যাকাউন্ট আছে? লগইন করুন",
 code:"ইমেইলে আসা কোড",npw:"নতুন পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)",vTitle:"কোডটি বসান",fTitle:"পাসওয়ার্ড ভুলে গেছেন",rsTitle:"নতুন পাসওয়ার্ড দিন",verify:"নিশ্চিত করুন",sendCode:"কোড পাঠান",resetBtn:"পাসওয়ার্ড বদলান",back:"লগইনে ফিরুন",forgotq:"পাসওয়ার্ড ভুলে গেছেন?",resend:"আবার কোড পাঠান",
 codeSent:"আপনার ইমেইলে একটা কোড পাঠানো হয়েছে। নিচে কোডটি বসান।",pwDone:"পাসওয়ার্ড বদলানো হয়েছে।",needEmail:"আগে আপনার ইমেইল লিখুন।",needCode:"ইমেইলে আসা কোডটি লিখুন।",short:"পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।",
 badcode:"কোডটি ভুল বা মেয়াদ শেষ। আবার চেষ্টা করুন।",wait:"আবার কোড চাইতে এক মিনিট অপেক্ষা করুন।",
@@ -142,7 +142,7 @@ function applyLang(){document.documentElement.lang=lang;
  $("cd").style.display=(mode=="verify"||mode=="reset")?"block":"none";
  $("fgw").style.display=T[3]?"block":"none";
  sels();for(const id in msgs)setMsg(id,msgs[id].k,msgs[id].raw);
- if(me){renderN();renderM()}}
+ if(me){renderN();renderM()}showWho()}
 
 /* ===== OOP: classes (attributes + methods) ===== */
 class Language{ // ভাষা বদল
@@ -212,7 +212,12 @@ $("ab").onclick=async()=>{amClear();if(!sb){amErr(initErr);return}
  else if(mode=="reset"){if(!c){amErr(t("needCode"));return}if(p.length<6){amErr(t("short"));return}
   r=await AuthService.resetPassword(e,c,p);if(r.error)amErr(r.error.message);else alert(t("pwDone"))}};
 $("lo").onclick=async()=>{await AuthService.logout();mode="login";$("pw").value="";$("cd").value="";amClear();applyLang()};
-if(sb)sb.auth.onAuthStateChange((_,s)=>{me=s?s.user:null;$("auth").style.display=me?"none":"block";$("app").style.display=me?"block":"none";$("lo").style.display=me?"inline-block":"none";ch.forEach(c=>sb.removeChannel(c));ch=[];if(me)start()});
+function showWho(){const e=me&&me.email?me.email:"";$("who").textContent=e;$("who2").textContent=e?t("loggedAs")+e:""}
+let curUid=null;
+if(sb)sb.auth.onAuthStateChange((_,s)=>{me=s?s.user:null;
+ const nid=me?me.id:null;
+ if(nid!==curUid){curUid=nid;donor=null;$("df").reset();$("rf").reset();$("dd").style.display="none";setMsg("dm","","");setMsg("rm","","");NL=[];ML=[];renderN();renderM()}
+ showWho();$("auth").style.display=me?"none":"block";$("app").style.display=me?"block":"none";$("lo").style.display=me?"inline-block":"none";ch.forEach(c=>sb.removeChannel(c));ch=[];if(me)start()});
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{document.querySelectorAll("#tabs button").forEach(x=>x.classList.toggle("on",x==b));document.querySelectorAll(".v").forEach(v=>v.classList.toggle("on",v.id=="v-"+b.dataset.t))});
 async function start(){await loadDonor();loadN();loadM();
  ch.push(sb.channel("n").on("postgres_changes",{event:"INSERT",schema:"public",table:"notifications",filter:"user_id=eq."+me.id},loadN).subscribe());
