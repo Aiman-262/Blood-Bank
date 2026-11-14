@@ -86,3 +86,35 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 @media(max-width:380px){.gp button{width:52px;height:52px}.top h1{font-size:21px}}
+
+/* Desktop: keep the bottom menu the same width as the content */
+@media(min-width:700px){
+ #tabs{left:50%;right:auto;width:480px;transform:translateX(-50%);border:1px solid var(--bd);border-bottom:0;border-radius:20px 20px 0 0}
+}
+@media(hover:hover){
+ .gp button:hover{border-color:var(--r)}
+ #tabs button.t:hover{color:var(--r)}
+ #nl .c,#ml .c{transition:box-shadow .15s}
+ #nl .c:hover,#ml .c:hover{box-shadow:0 10px 28px -12px rgba(80,20,15,.35)}
+}
+
+/* ===== App-shell look on desktop (phone-width column) ===== */
+@media(min-width:700px){
+ body{background:color-mix(in srgb,var(--b2) 86%,#6a1d18)}
+ .w{max-width:480px;min-height:100vh;background:var(--b2);box-shadow:0 0 0 1px var(--bd),0 24px 70px -24px rgba(80,20,15,.45)}
+}
+
+/* ===== Home hero ===== */
+.hero{margin:16px 0 4px;padding:22px 20px;border-radius:24px;background:var(--bg);border:1px solid var(--bd);box-shadow:var(--sh);position:relative;overflow:hidden}
+.hero::before{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border-radius:50% 0 50% 50%;transform:rotate(-45deg);background:var(--s)}
+.hero>*{position:relative}
+.hero h2{font-size:23px;margin:0 0 4px}
+.hero p{margin:0 0 16px;color:var(--m);font-size:15px}
+.hero .hb{display:flex;gap:10px}
+.hero .hb button{flex:1}
+.hero .em{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:16px;padding:11px 14px;border-radius:14px;background:var(--s);font-size:14px;font-weight:600}
+.hero .em a{padding:7px 14px;border-radius:999px;background:var(--r);color:#fff;font-weight:700;text-decoration:none}
+
+/* ===== Quick question chips (Ask AI) ===== */
+.qc{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.qc button{min-height:38px;padding:8px 14px;background:var(--s);color:var(--r);font-weight:600;font-size:13.5px}
