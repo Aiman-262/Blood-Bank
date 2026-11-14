@@ -118,3 +118,28 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{ou
 /* ===== Quick question chips (Ask AI) ===== */
 .qc{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
 .qc button{min-height:38px;padding:8px 14px;background:var(--s);color:var(--r);font-weight:600;font-size:13.5px}
+/* ===== Side Drawer Menu ===== */
+.bb-menu-btn{width:40px;height:40px;border-radius:50%;border:0;margin-left:auto;
+  background:rgba(255,255,255,.2);color:#fff;font-size:22px;cursor:pointer;flex-shrink:0}
+.bb-menu-btn.bb-float{position:fixed;top:12px;right:12px;z-index:9998}
+#bbDrawer{position:fixed;top:0;bottom:0;left:50%;width:100%;max-width:480px;
+  transform:translateX(-50%);z-index:9999;overflow:hidden;pointer-events:none}
+#bbDrawer .bb-shade{position:absolute;inset:0;background:rgba(0,0,0,.5);opacity:0;transition:opacity .25s}
+#bbDrawer .bb-panel{position:absolute;top:0;bottom:0;right:0;width:80%;background:#fff0f0;
+  transform:translateX(100%);transition:transform .25s;border-radius:24px 0 0 24px;
+  display:flex;flex-direction:column;overflow-y:auto}
+#bbDrawer.open{pointer-events:auto}
+#bbDrawer.open .bb-shade{opacity:1}
+#bbDrawer.open .bb-panel{transform:translateX(0)}
+#bbDrawer .bb-head{background:linear-gradient(135deg,#c62828,#8b0000);color:#fff;
+  padding:40px 20px 24px;display:flex;align-items:center;gap:14px;border-radius:24px 0 0 0}
+#bbDrawer .bb-ava{width:64px;height:64px;border-radius:50%;border:3px solid #fff;
+  background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700}
+#bbDrawer .bb-name{font-size:20px;font-weight:700}
+#bbDrawer .bb-item{display:flex;align-items:center;gap:16px;padding:16px 22px;border:0;
+  background:none;width:100%;text-align:left;font-size:16px;color:#222;cursor:pointer}
+#bbDrawer .bb-item:hover{background:rgba(198,40,40,.08)}
+#bbDrawer .bb-item .ic{font-size:20px;width:26px;text-align:center}
+#bbDrawer .bb-item.red{color:#e53935}
+#bbDrawer .bb-line{height:1px;background:#ddd;margin:6px 22px}
+#bbDrawer .bb-ver{margin-top:auto;padding:16px;text-align:center;color:#999;font-size:13px}
