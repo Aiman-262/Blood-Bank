@@ -47,3 +47,74 @@ function render(){
 render();
 var lb=$("lg");if(lb)lb.addEventListener("click",function(){setTimeout(render,0)});
 }catch(e){}})();
+/* ===== Side Drawer Menu ===== */
+(function () {
+  if (window.__bbDrawer) return;
+  window.__bbDrawer = true;
+
+  // মেনুর আইটেম: label = যা দেখাবে, words = বাটনের যে লেখা খুঁজে ক্লিক করবে
+  var ITEMS = [
+    { ic: '🏠', label: 'হোম', words: ['home', 'হোম'] },
+    { ic: '🩸', label: 'রক্ত চাই', words: ['request blood', 'রক্ত চাই', 'request'] },
+    { ic: '🤝', label: 'ডোনার', words: ['donor', 'ডোনার'] },
+    { ic: '🤖', label: 'Ask AI', words: ['ask'] },
+    { ic: '👤', label: 'প্রোফাইল', words: ['profile', 'প্রোফাইল'] },
+    { line: true },
+    { ic: '🚪', label: 'লগআউট', words: ['logout', 'log out', 'sign out', 'লগআউট'], red: true }
+  ];
+
+  function goTo(words) {
+    var els = document.querySelectorAll('button,a,[role=button],[onclick]');
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].closest('#bbDrawer') || els[i].classList.contains('bb-menu-btn')) continue;
+      var t = (els[i].textContent || '').trim().toLowerCase();
+      if (!t || t.length > 30) continue;
+      for (var j = 0; j < words.length; j++) {
+        if (t.indexOf(words[j]) > -1) { els[i].click(); return true; }
+      }
+    }
+    return false;
+  }
+
+  function build() {
+    var d = document.createElement('div');
+    d.id = 'bbDrawer';
+    var html = '<div class="bb-shade"></div><div class="bb-panel">' +
+      '<div class="bb-head"><div class="bb-ava">?</div><div class="bb-name">অতিথি</div></div>';
+    ITEMS.forEach(function (it, n) {
+      if (it.line) { html += '<div class="bb-line"></div>'; return; }
+      html += '<button class="bb-item' + (it.red ? ' red' : '') + '" data-i="' + n + '">' +
+        '<span class="ic">' + it.ic + '</span><span>' + it.label + '</span></button>';
+    });
+    html += '<div class="bb-ver">Blood Bank — v1.0</div></div>';
+    d.innerHTML = html;
+    document.body.appendChild(d);
+
+    d.querySelector('.bb-shade').onclick = close;
+    d.querySelectorAll('.bb-item').forEach(function (b) {
+      b.onclick = function () {
+        var it = ITEMS[b.getAttribute('data-i')];
+        close();
+        setTimeout(function () { goTo(it.words); }, 280);
+      };
+    });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  }
+
+  function open() { document.getElementById('bbDrawer').classList.add('open'); }
+  function close() { var d = document.getElementById('bbDrawer'); if (d) d.classList.remove('open'); }
+
+  function init() {
+    build();
+    var btn = document.createElement('button');
+    btn.className = 'bb-menu-btn';
+    btn.innerHTML = '&#9776;';
+    btn.setAttribute('aria-label', 'Menu');
+    btn.onclick = open;
+    var h = document.querySelector('header, .header, .app-header, #header');
+    if (h) { h.appendChild(btn); } else { btn.classList.add('bb-float'); document.body.appendChild(btn); }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
