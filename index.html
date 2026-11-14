@@ -50,7 +50,7 @@ input,select{border-radius:14px;padding:12px}
 .cr h4{margin:0 0 8px;font-size:15px}.cr.gv h4{color:var(--r)}.cr.rc h4{color:#1c7a3d}
 .cr span{display:inline-block;min-width:44px;text-align:center;margin:3px 4px 3px 0;padding:6px 10px;border-radius:999px;font-weight:800;font-size:14px;border:2px solid}
 .cr.gv span{border-color:#e7a7a3;color:var(--r)}.cr.rc span{border-color:#a5cfae;color:#1c7a3d}
-</style></head><body><div class="w">
+</style><link rel="stylesheet" href="ui-upgrade.css"></head><body><div class="w">
 <div class="top"><div><h1>🩸 Blood Bank</h1><div id="who" style="font-size:12px;color:#fff;opacity:.9;word-break:break-all"></div></div><div><button class="o" id="lg">বাংলা</button> <button class="o" id="lo" style="display:none" data-i="logout">Logout</button></div></div>
 
 <div id="sc"></div>
@@ -268,4 +268,4 @@ function draw(){
 draw();
 const lb=document.getElementById("lg");if(lb)lb.addEventListener("click",()=>setTimeout(draw,0));
 }catch(e){}})();
-</script></body></html>
+</script><script src="ui-upgrade.js"></script></body></html>
