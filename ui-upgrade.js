@@ -48,25 +48,30 @@ render();
 var lb=$("lg");if(lb)lb.addEventListener("click",function(){setTimeout(render,0)});
 }catch(e){}})();
 /* ===== Side Drawer Menu ===== */
+/* ===== Side Drawer Menu v2 ===== */
 (function () {
   if (window.__bbDrawer) return;
   window.__bbDrawer = true;
 
-  // মেনুর আইটেম: label = যা দেখাবে, words = বাটনের যে লেখা খুঁজে ক্লিক করবে
   var ITEMS = [
-    { ic: '🏠', label: 'হোম', words: ['home', 'হোম'] },
-    { ic: '🩸', label: 'রক্ত চাই', words: ['request blood', 'রক্ত চাই', 'request'] },
-    { ic: '🤝', label: 'ডোনার', words: ['donor', 'ডোনার'] },
+    { ic: '🩸', label: 'রক্ত চাই', words: ['request blood', 'রক্ত চাই'] },
+    { ic: '🔔', label: 'নোটিফিকেশন', words: ['notifications', 'নোটিফিকেশন'] },
+    { ic: '📋', label: 'আমার রিকোয়েস্ট', words: ['my requests', 'আমার'] },
+    { ic: '👤', label: 'ডোনার প্রোফাইল', words: ['donor profile', 'ডোনার'] },
     { ic: '🤖', label: 'Ask AI', words: ['ask'] },
-    { ic: '👤', label: 'প্রোফাইল', words: ['profile', 'প্রোফাইল'] },
     { line: true },
     { ic: '🚪', label: 'লগআউট', words: ['logout', 'log out', 'sign out', 'লগআউট'], red: true }
   ];
 
+  var btn = document.createElement('button');
+  btn.className = 'bb-menu-btn';
+  btn.innerHTML = '&#9776;';
+  btn.setAttribute('aria-label', 'Menu');
+
   function goTo(words) {
     var els = document.querySelectorAll('button,a,[role=button],[onclick]');
     for (var i = 0; i < els.length; i++) {
-      if (els[i].closest('#bbDrawer') || els[i].classList.contains('bb-menu-btn')) continue;
+      if (els[i].closest('#bbDrawer') || els[i] === btn) continue;
       var t = (els[i].textContent || '').trim().toLowerCase();
       if (!t || t.length > 30) continue;
       for (var j = 0; j < words.length; j++) {
@@ -76,14 +81,25 @@ var lb=$("lg");if(lb)lb.addEventListener("click",function(){setTimeout(render,0)
     return false;
   }
 
+  function userEmail() {
+    var els = document.querySelectorAll('header *, .header *, .app-header *');
+    for (var i = 0; i < els.length; i++) {
+      if (els[i].children.length) continue;
+      var m = (els[i].textContent || '').match(/[^\s@]+@[^\s@]+\.[^\s@]+/);
+      if (m) return m[0];
+    }
+    return '';
+  }
+
   function build() {
     var d = document.createElement('div');
     d.id = 'bbDrawer';
     var html = '<div class="bb-shade"></div><div class="bb-panel">' +
-      '<div class="bb-head"><div class="bb-ava">?</div><div class="bb-name">অতিথি</div></div>';
+      '<div class="bb-head"><div class="bb-ava">?</div><div><div class="bb-name">অতিথি</div>' +
+      '<div class="bb-email"></div></div></div>';
     ITEMS.forEach(function (it, n) {
       if (it.line) { html += '<div class="bb-line"></div>'; return; }
-      html += '<button class="bb-item' + (it.red ? ' red' : '') + '" data-i="' + n + '">' +
+      html += '<button class="bb-item' + (it.red ? ' red' : '') + '" data-bbi="' + n + '">' +
         '<span class="ic">' + it.ic + '</span><span>' + it.label + '</span></button>';
     });
     html += '<div class="bb-ver">Blood Bank — v1.0</div></div>';
@@ -93,7 +109,7 @@ var lb=$("lg");if(lb)lb.addEventListener("click",function(){setTimeout(render,0)
     d.querySelector('.bb-shade').onclick = close;
     d.querySelectorAll('.bb-item').forEach(function (b) {
       b.onclick = function () {
-        var it = ITEMS[b.getAttribute('data-i')];
+        var it = ITEMS[b.getAttribute('data-bbi')];
         close();
         setTimeout(function () { goTo(it.words); }, 280);
       };
@@ -101,18 +117,48 @@ var lb=$("lg");if(lb)lb.addEventListener("click",function(){setTimeout(render,0)
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
   }
 
-  function open() { document.getElementById('bbDrawer').classList.add('open'); }
-  function close() { var d = document.getElementById('bbDrawer'); if (d) d.classList.remove('open'); }
+  function open() {
+    var d = document.getElementById('bbDrawer');
+    var em = userEmail();
+    d.querySelector('.bb-ava').textContent = em ? em.charAt(0).toUpperCase() : '?';
+    d.querySelector('.bb-name').textContent = em ? em.split('@')[0] : 'অতিথি';
+    d.querySelector('.bb-email').textContent = em;
+    d.classList.add('open');
+  }
+  function close() {
+    var d = document.getElementById('bbDrawer');
+    if (d) d.classList.remove('open');
+  }
+
+  function place() {
+    var h = document.querySelector('header, .header, .app-header, #header');
+    if (!h) {
+      if (!btn.isConnected) { btn.classList.add('bb-float'); document.body.appendChild(btn); }
+      return;
+    }
+    btn.classList.remove('bb-float');
+    var lo = null, bs = h.querySelectorAll('button,a');
+    for (var i = 0; i < bs.length; i++) {
+      var t = (bs[i].textContent || '').trim().toLowerCase();
+      if (t === 'logout' || t === 'log out' || t === 'লগআউট') { lo = bs[i]; break; }
+    }
+    if (lo) {
+      if (btn.parentNode !== lo.parentNode || btn.nextSibling !== lo) lo.parentNode.insertBefore(btn, lo);
+      if (lo.style.display !== 'none') lo.style.display = 'none';
+    } else if (btn.parentNode !== h) {
+      h.appendChild(btn);
+    }
+  }
 
   function init() {
     build();
-    var btn = document.createElement('button');
-    btn.className = 'bb-menu-btn';
-    btn.innerHTML = '&#9776;';
-    btn.setAttribute('aria-label', 'Menu');
     btn.onclick = open;
-    var h = document.querySelector('header, .header, .app-header, #header');
-    if (h) { h.appendChild(btn); } else { btn.classList.add('bb-float'); document.body.appendChild(btn); }
+    place();
+    var timer;
+    new MutationObserver(function () {
+      clearTimeout(timer);
+      timer = setTimeout(place, 100);
+    }).observe(document.body, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
