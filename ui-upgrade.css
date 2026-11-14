@@ -1,0 +1,88 @@
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap');
+/* Blood Bank UI upgrade: loads AFTER the inline <style>, so it overrides it. No logic is touched. */
+:root{--r:#C62828;--rd:#7F1414;--ink:#2b1614;--b2:#f6f1ef;--bd:#ecdad6;--s:#fdecea;--ok:#1c7a3d;--rad:16px;--sh:0 1px 2px rgba(80,20,15,.06),0 8px 24px -12px rgba(80,20,15,.22)}
+@media(prefers-color-scheme:dark){:root{--bg:#1d1413;--b2:#120c0b;--tx:#f6ebe8;--m:#c9b0ab;--bd:#40292689;--s:#3a1d1b;--ok:#6fcf8e}}
+body{font-family:"Hind Siliguri","Nirmala UI","Noto Sans Bengali",system-ui,sans-serif;font-size:16px;line-height:1.55;background:var(--b2);-webkit-tap-highlight-color:transparent}
+h1,h2,h3{letter-spacing:-.01em;font-weight:700}
+h3{font-size:19px;margin-bottom:12px}
+
+/* Header */
+.top{position:relative;overflow:hidden;background:linear-gradient(160deg,var(--r) 0%,var(--rd) 100%);border-radius:0 0 32px 32px;padding:calc(20px + env(safe-area-inset-top,0px)) 18px 26px}
+.top::after{content:"";position:absolute;right:-40px;top:-50px;width:180px;height:180px;border-radius:50% 0 50% 50%;transform:rotate(-45deg);background:rgba(255,255,255,.07);pointer-events:none}
+.top h1{font-size:24px;font-weight:700}
+#who{margin-top:2px;font-size:12.5px!important;opacity:.85!important}
+.top button.o{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.55);color:#fff;font-size:13px;padding:7px 14px;transition:background .15s}
+.top button.o:hover{background:rgba(255,255,255,.22)}
+.av{display:inline-grid;place-items:center;width:34px;height:34px;margin-right:6px;border-radius:50%;background:#fff;color:var(--r);font-weight:700;font-size:16px;vertical-align:middle;box-shadow:0 2px 8px rgba(0,0,0,.2)}
+
+/* Notice */
+#sc{margin:14px 16px 0;padding:10px 14px;border-radius:12px;background:#fff4e5;color:#8a4300;border:1px solid #f6d9ae;font-size:13.5px;font-weight:600}
+
+/* Cards */
+.w{max-width:600px}
+.c{border-radius:var(--rad);border:1px solid var(--bd);box-shadow:var(--sh);padding:20px}
+#v-nt .c,#v-mr .c{background:var(--bg);border:1px solid var(--bd);border-left:5px solid var(--r)}
+#v-nt .c p:first-child{font-weight:600;margin-top:0}
+#v-mr .bg{font-size:15px;padding:3px 12px;margin-bottom:6px}
+
+/* Inputs and buttons */
+input,select{min-height:48px;border-radius:12px;border:1.5px solid var(--bd);padding:11px 14px;margin:6px 0;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus{outline:0;border-color:var(--r);box-shadow:0 0 0 4px rgba(198,40,40,.15)}
+input[type=checkbox]{min-height:0;width:20px!important;height:20px;accent-color:var(--r);vertical-align:middle}
+label.m{display:block;margin-top:8px}
+button{min-height:46px;font-family:inherit;letter-spacing:.01em;transition:transform .12s,box-shadow .15s,background .15s}
+button:active{transform:scale(.97)}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #ffb4ab;outline-offset:2px}
+#rf>button,#auth>button#ab{width:100%;margin-top:10px;box-shadow:0 6px 16px -6px rgba(198,40,40,.6)}
+#auth>button#sw{width:100%;margin-top:8px}
+#df>button:not(.o){min-width:130px;box-shadow:0 6px 16px -6px rgba(198,40,40,.6)}
+#dd{margin-left:6px}
+#nl .c button,#ml .c button{width:100%;margin-top:10px}
+#ml .c button.o{width:auto}
+#rm,#dm{margin-top:12px;padding:10px 14px;border-radius:12px;background:#e9f6ee;color:var(--ok)}
+#rm:empty,#dm:empty{display:none}
+#am:empty{display:none}
+#am{margin-top:12px}
+
+/* Bottom navigation */
+#tabs{padding:6px 6px calc(8px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(10px)}
+#tabs button.t{position:relative;min-height:56px;gap:3px;font-size:11.5px;font-weight:600}
+#tabs button.t.on::after{content:"";position:absolute;top:-7px;left:25%;right:25%;height:3px;border-radius:0 0 4px 4px;background:var(--r)}
+#tabs button.t::before{font-size:21px}
+#nc{position:absolute;top:2px;left:calc(50% + 6px);min-width:18px;padding:0 5px;border-radius:999px;background:var(--r);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center}
+#nc:empty{display:none}
+
+/* Request-blood: group picker (compatibility guide) */
+.gp{gap:8px}
+.gp button{width:58px;height:58px;font-size:15px;min-height:0;border-width:2px}
+.gp button.on{box-shadow:0 0 0 4px rgba(198,40,40,.18),0 6px 14px -4px rgba(198,40,40,.55);transform:scale(1.06)}
+.cr{border-radius:14px}
+.cr h4{font-size:14.5px}
+
+/* Empty states */
+#nl>p.m,#ml>p.m{margin:16px 0;padding:36px 20px;text-align:center;border:2px dashed var(--bd);border-radius:var(--rad);font-size:15px}
+#nl>p.m::before,#ml>p.m::before{content:"\1FA78";display:block;font-size:34px;margin-bottom:6px;opacity:.8}
+
+/* My requests: donors who accepted */
+#ml .c a{margin-top:8px;padding:10px 14px;border-radius:12px;background:#e9f6ee;color:var(--ok);font-weight:600;text-decoration:none}
+@media(prefers-color-scheme:dark){#ml .c a,#rm,#dm{background:#16281c}#sc{background:#2f2112;color:#ffcf99;border-color:#5a3b17}}
+
+/* Ask AI: chat bubbles (user = odd, AI = even) */
+#ac{display:flex;flex-direction:column;gap:8px;margin:8px 0 12px}
+#ac p{margin:0;max-width:86%;padding:10px 14px;border-radius:18px;white-space:pre-wrap}
+#ac p:nth-child(odd){align-self:flex-end;background:var(--r);color:#fff;border-bottom-right-radius:4px}
+#ac p:nth-child(even){align-self:flex-start;background:var(--s);color:var(--tx);border-bottom-left-radius:4px}
+#ac p.e{background:#fdecea;color:var(--r)}
+#as{width:100%;margin-top:6px}
+
+/* Login card */
+#auth{padding:24px 20px;margin-top:20px}
+#at{font-size:22px;margin-bottom:10px}
+#fgw{margin:10px 0 0;text-align:center}
+
+/* Toast (used by ui-upgrade.js) */
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:50;max-width:90%;padding:11px 18px;border-radius:999px;background:#2b1614;color:#fff;font-size:14px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,.3);transition:opacity .25s,transform .25s}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+@media(max-width:380px){.gp button{width:52px;height:52px}.top h1{font-size:21px}}
