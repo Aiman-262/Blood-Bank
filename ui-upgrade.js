@@ -49,6 +49,7 @@ var lb=$("lg");if(lb)lb.addEventListener("click",function(){setTimeout(render,0)
 }catch(e){}})();
 /* ===== Side Drawer Menu ===== */
 /* ===== Side Drawer Menu v2 ===== */
+/* ===== Side Drawer Menu v3 ===== */
 (function () {
   if (window.__bbDrawer) return;
   window.__bbDrawer = true;
@@ -81,10 +82,12 @@ var lb=$("lg");if(lb)lb.addEventListener("click",function(){setTimeout(render,0)
     return false;
   }
 
+  // হেডারে দেখা যাচ্ছে এমন ইমেইল খোঁজে; পেলে ধরে নেয় ব্যবহারকারী লগইন করা
   function userEmail() {
     var els = document.querySelectorAll('header *, .header *, .app-header *');
     for (var i = 0; i < els.length; i++) {
       if (els[i].children.length) continue;
+      if (!els[i].getClientRects().length) continue;
       var m = (els[i].textContent || '').match(/[^\s@]+@[^\s@]+\.[^\s@]+/);
       if (m) return m[0];
     }
@@ -131,36 +134,12 @@ var lb=$("lg");if(lb)lb.addEventListener("click",function(){setTimeout(render,0)
   }
 
   function place() {
+    var loggedIn = !!userEmail();
+
+    // লগইন না থাকলে বাটন লুকাও আর মেনু বন্ধ করো
+    var want = loggedIn ? '' : 'none';
+    if (btn.style.display !== want) btn.style.display = want;
+    if (!loggedIn) { close(); return; }
+
     var h = document.querySelector('header, .header, .app-header, #header');
     if (!h) {
-      if (!btn.isConnected) { btn.classList.add('bb-float'); document.body.appendChild(btn); }
-      return;
-    }
-    btn.classList.remove('bb-float');
-    var lo = null, bs = h.querySelectorAll('button,a');
-    for (var i = 0; i < bs.length; i++) {
-      var t = (bs[i].textContent || '').trim().toLowerCase();
-      if (t === 'logout' || t === 'log out' || t === 'লগআউট') { lo = bs[i]; break; }
-    }
-    if (lo) {
-      if (btn.parentNode !== lo.parentNode || btn.nextSibling !== lo) lo.parentNode.insertBefore(btn, lo);
-      if (lo.style.display !== 'none') lo.style.display = 'none';
-    } else if (btn.parentNode !== h) {
-      h.appendChild(btn);
-    }
-  }
-
-  function init() {
-    build();
-    btn.onclick = open;
-    place();
-    var timer;
-    new MutationObserver(function () {
-      clearTimeout(timer);
-      timer = setTimeout(place, 100);
-    }).observe(document.body, { childList: true, subtree: true });
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-  else init();
-})();
